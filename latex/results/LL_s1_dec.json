@@ -1,0 +1,22 @@
+{
+  "tag": "LL_s1_dec",
+  "model": "nafnet",
+  "mode": "decoupled",
+  "ca": false,
+  "train_n": 0,
+  "params_M": 1.72,
+  "coupled_test_PSNR": 22.233,
+  "decoupled_test_PSNR": 22.863,
+  "per_cell": {
+    "low_noise|coupled": {
+      "PSNR": 22.233,
+      "SSIM": 0.6551,
+      "n": 100
+    },
+    "low_noise|decoupled": {
+      "PSNR": 22.863,
+      "SSIM": 0.7096,
+      "n": 100
+    }
+  }
+}

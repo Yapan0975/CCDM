@@ -1,0 +1,32 @@
+# CCDM / CCD code + data release. Track only: README, LICENSE, code/, latex/results/.
+
+# Not part of the release
+/data/
+/pr_submit/
+/docs/
+/references/
+/results/
+
+# LaTeX manuscript sources and build artefacts (release keeps only latex/results/)
+/latex/*.tex
+/latex/*.pdf
+/latex/*.aux
+/latex/*.log
+/latex/*.bbl
+/latex/*.blg
+/latex/*.out
+/latex/*.spl
+/latex/*.md
+/latex/*.docx
+/latex/*.txt
+/latex/*.tmp.*
+/latex/figs/
+/latex/tmp/
+
+# Python / editor
+__pycache__/
+*.pyc
+*.pyo
+*.tmp.*
+*.swp
+.DS_Store

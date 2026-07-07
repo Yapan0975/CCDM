@@ -1,0 +1,32 @@
+{
+  "tag": "FW_s4_cpl",
+  "model": "nafnet",
+  "mode": "coupled",
+  "ca": false,
+  "train_n": 0,
+  "params_M": 1.72,
+  "coupled_test_PSNR": 22.691,
+  "decoupled_test_PSNR": 17.807,
+  "per_cell": {
+    "low_haze_rain|coupled": {
+      "PSNR": 20.081,
+      "SSIM": 0.6659,
+      "n": 100
+    },
+    "low_haze_rain|decoupled": {
+      "PSNR": 15.107,
+      "SSIM": 0.5204,
+      "n": 100
+    },
+    "low_rain|coupled": {
+      "PSNR": 25.302,
+      "SSIM": 0.792,
+      "n": 100
+    },
+    "low_rain|decoupled": {
+      "PSNR": 20.508,
+      "SSIM": 0.6815,
+      "n": 100
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "tag": "OR_mix_s0",
+  "model": "onerestore",
+  "mode": "mixed",
+  "coupled_test_PSNR": 20.277,
+  "decoupled_test_PSNR": 20.14,
+  "n": 100
+}

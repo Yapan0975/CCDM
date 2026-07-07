@@ -1,0 +1,15 @@
+{
+  "decoupled": {
+    "PSNR": 11.699,
+    "SSIM": 0.3607
+  },
+  "coupled": {
+    "PSNR": 11.082,
+    "SSIM": 0.3827
+  },
+  "input": {
+    "PSNR": 7.773,
+    "SSIM": 0.1914
+  },
+  "gap_coupled_minus_decoupled_PSNR": -0.617
+}

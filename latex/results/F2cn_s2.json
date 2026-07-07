@@ -1,0 +1,32 @@
+{
+  "tag": "F2cn_s2",
+  "model": "couplenet",
+  "mode": "coupled",
+  "ca": false,
+  "train_n": 0,
+  "params_M": 2.25,
+  "coupled_test_PSNR": 22.669,
+  "decoupled_test_PSNR": 17.445,
+  "per_cell": {
+    "low_haze_rain|coupled": {
+      "PSNR": 20.116,
+      "SSIM": 0.6661,
+      "n": 100
+    },
+    "low_haze_rain|decoupled": {
+      "PSNR": 14.985,
+      "SSIM": 0.5068,
+      "n": 100
+    },
+    "low_rain|coupled": {
+      "PSNR": 25.223,
+      "SSIM": 0.786,
+      "n": 100
+    },
+    "low_rain|decoupled": {
+      "PSNR": 19.905,
+      "SSIM": 0.6712,
+      "n": 100
+    }
+  }
+}

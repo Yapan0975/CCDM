@@ -1,0 +1,30 @@
+{
+  "tag": "M1_dec",
+  "mode": "decoupled",
+  "ca": false,
+  "params_M": 1.72,
+  "coupled_test_PSNR": 20.378,
+  "decoupled_test_PSNR": 21.724,
+  "per_cell": {
+    "low_haze_rain|coupled": {
+      "PSNR": 15.359,
+      "SSIM": 0.6079,
+      "n": 20
+    },
+    "low_haze_rain|decoupled": {
+      "PSNR": 19.563,
+      "SSIM": 0.6657,
+      "n": 20
+    },
+    "low_rain|coupled": {
+      "PSNR": 22.704,
+      "SSIM": 0.7832,
+      "n": 20
+    },
+    "low_rain|decoupled": {
+      "PSNR": 23.885,
+      "SSIM": 0.7903,
+      "n": 20
+    }
+  }
+}

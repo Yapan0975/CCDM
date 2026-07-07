@@ -1,0 +1,32 @@
+{
+  "tag": "FW64_dec",
+  "model": "nafnet",
+  "mode": "decoupled",
+  "ca": false,
+  "train_n": 0,
+  "params_M": 6.79,
+  "coupled_test_PSNR": 18.702,
+  "decoupled_test_PSNR": 22.143,
+  "per_cell": {
+    "low_haze_rain|coupled": {
+      "PSNR": 14.87,
+      "SSIM": 0.5973,
+      "n": 100
+    },
+    "low_haze_rain|decoupled": {
+      "PSNR": 19.94,
+      "SSIM": 0.6793,
+      "n": 100
+    },
+    "low_rain|coupled": {
+      "PSNR": 22.534,
+      "SSIM": 0.7707,
+      "n": 100
+    },
+    "low_rain|decoupled": {
+      "PSNR": 24.346,
+      "SSIM": 0.776,
+      "n": 100
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "tag": "LL_cpl",
+  "model": "nafnet",
+  "mode": "coupled",
+  "ca": false,
+  "train_n": 0,
+  "params_M": 1.72,
+  "coupled_test_PSNR": 24.2,
+  "decoupled_test_PSNR": 20.981,
+  "per_cell": {
+    "low_noise|coupled": {
+      "PSNR": 24.2,
+      "SSIM": 0.7569,
+      "n": 100
+    },
+    "low_noise|decoupled": {
+      "PSNR": 20.981,
+      "SSIM": 0.6607,
+      "n": 100
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "tag": "SMOKE_R",
+  "model": "restormer",
+  "mode": "coupled",
+  "ca": false,
+  "train_n": 0,
+  "params_M": 4.38,
+  "coupled_test_PSNR": 16.653,
+  "decoupled_test_PSNR": 16.18,
+  "per_cell": {
+    "low_haze_rain|coupled": {
+      "PSNR": 13.815,
+      "SSIM": 0.3736,
+      "n": 100
+    },
+    "low_haze_rain|decoupled": {
+      "PSNR": 13.379,
+      "SSIM": 0.3244,
+      "n": 100
+    },
+    "low_rain|coupled": {
+      "PSNR": 19.491,
+      "SSIM": 0.5302,
+      "n": 100
+    },
+    "low_rain|decoupled": {
+      "PSNR": 18.98,
+      "SSIM": 0.4838,
+      "n": 100
+    }
+  }
+}

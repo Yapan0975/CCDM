@@ -1,0 +1,10 @@
+{
+  "mode": "mixed",
+  "seed": 3,
+  "epochs": 4,
+  "train_size": 9890,
+  "ar_exdark": 0.5744387958068088,
+  "ap_exdark": 0.44033253765135005,
+  "ap50_exdark": 0.7316698080313118,
+  "missing_imgs": 0
+}

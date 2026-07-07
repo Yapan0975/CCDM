@@ -1,0 +1,8 @@
+{
+  "tag": "ORsmoke",
+  "model": "onerestore",
+  "mode": "coupled",
+  "coupled_test_PSNR": 14.466,
+  "decoupled_test_PSNR": 14.599,
+  "n": 20
+}

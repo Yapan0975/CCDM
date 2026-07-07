@@ -1,0 +1,30 @@
+{
+  "tag": "M3_cpl_ca",
+  "mode": "coupled",
+  "ca": true,
+  "params_M": 2.23,
+  "coupled_test_PSNR": 20.346,
+  "decoupled_test_PSNR": 19.249,
+  "per_cell": {
+    "low_haze_rain|coupled": {
+      "PSNR": 19.083,
+      "SSIM": 0.679,
+      "n": 20
+    },
+    "low_haze_rain|decoupled": {
+      "PSNR": 17.349,
+      "SSIM": 0.6081,
+      "n": 20
+    },
+    "low_rain|coupled": {
+      "PSNR": 23.802,
+      "SSIM": 0.8059,
+      "n": 20
+    },
+    "low_rain|decoupled": {
+      "PSNR": 21.149,
+      "SSIM": 0.7392,
+      "n": 20
+    }
+  }
+}

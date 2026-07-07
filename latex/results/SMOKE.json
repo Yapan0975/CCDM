@@ -1,0 +1,30 @@
+{
+  "tag": "SMOKE",
+  "mode": "coupled",
+  "ca": false,
+  "params_M": 1.72,
+  "coupled_test_PSNR": 16.081,
+  "decoupled_test_PSNR": 15.666,
+  "per_cell": {
+    "low_haze_rain|coupled": {
+      "PSNR": 13.256,
+      "SSIM": 0.4166,
+      "n": 20
+    },
+    "low_haze_rain|decoupled": {
+      "PSNR": 12.36,
+      "SSIM": 0.3632,
+      "n": 20
+    },
+    "low_rain|coupled": {
+      "PSNR": 19.733,
+      "SSIM": 0.5899,
+      "n": 20
+    },
+    "low_rain|decoupled": {
+      "PSNR": 18.973,
+      "SSIM": 0.5443,
+      "n": 20
+    }
+  }
+}

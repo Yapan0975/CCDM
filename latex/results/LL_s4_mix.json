@@ -1,0 +1,22 @@
+{
+  "tag": "LL_s4_mix",
+  "model": "nafnet",
+  "mode": "mixed",
+  "ca": false,
+  "train_n": 0,
+  "params_M": 1.72,
+  "coupled_test_PSNR": 22.991,
+  "decoupled_test_PSNR": 22.745,
+  "per_cell": {
+    "low_noise|coupled": {
+      "PSNR": 22.991,
+      "SSIM": 0.7121,
+      "n": 100
+    },
+    "low_noise|decoupled": {
+      "PSNR": 22.745,
+      "SSIM": 0.7081,
+      "n": 100
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "tag": "OR_dec_s4",
+  "model": "onerestore",
+  "mode": "decoupled",
+  "coupled_test_PSNR": 18.58,
+  "decoupled_test_PSNR": 20.783,
+  "n": 100
+}

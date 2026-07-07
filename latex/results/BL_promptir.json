@@ -1,0 +1,8 @@
+{
+  "tag": "BL_promptir",
+  "model": "promptir",
+  "mode": "off_the_shelf",
+  "coupled_test_PSNR": 15.256,
+  "decoupled_test_PSNR": 15.129,
+  "n": 100
+}

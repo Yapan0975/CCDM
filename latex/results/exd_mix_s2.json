@@ -1,0 +1,12 @@
+{
+  "mode": "mixed",
+  "seed": 2,
+  "epochs": 4,
+  "train_n": 4000,
+  "eval_n": 1000,
+  "ar_coupled_syn": 0.4080187274013822,
+  "ar_exdark": 0.13856225776812817,
+  "ap_exdark": 0.08524945208532302,
+  "ap50_exdark": 0.1879764968819938,
+  "missing_imgs": 0
+}

@@ -1,0 +1,8 @@
+{
+  "tag": "OR_cpl_s3",
+  "model": "onerestore",
+  "mode": "coupled",
+  "coupled_test_PSNR": 21.683,
+  "decoupled_test_PSNR": 19.537,
+  "n": 100
+}

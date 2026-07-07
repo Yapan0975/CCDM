@@ -1,0 +1,32 @@
+{
+  "tag": "FR_dec",
+  "model": "restormer",
+  "mode": "decoupled",
+  "ca": false,
+  "train_n": 0,
+  "params_M": 4.38,
+  "coupled_test_PSNR": 18.553,
+  "decoupled_test_PSNR": 22.842,
+  "per_cell": {
+    "low_haze_rain|coupled": {
+      "PSNR": 14.758,
+      "SSIM": 0.5995,
+      "n": 100
+    },
+    "low_haze_rain|decoupled": {
+      "PSNR": 20.523,
+      "SSIM": 0.6999,
+      "n": 100
+    },
+    "low_rain|coupled": {
+      "PSNR": 22.348,
+      "SSIM": 0.7735,
+      "n": 100
+    },
+    "low_rain|decoupled": {
+      "PSNR": 25.161,
+      "SSIM": 0.7981,
+      "n": 100
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "n": 100,
+  "input": {
+    "PSNR": 9.718,
+    "SSIM": 0.196
+  },
+  "decoupled": {
+    "PSNR": 17.245,
+    "SSIM": 0.5563
+  },
+  "coupled": {
+    "PSNR": 17.558,
+    "SSIM": 0.5605
+  },
+  "gap_PSNR_mean": 0.313,
+  "gap_PSNR_p": 0.0026,
+  "gap_SSIM_mean": 0.0042,
+  "gap_SSIM_p": 0.0288,
+  "win_rate_PSNR": 0.57,
+  "win_rate_SSIM": 0.52
+}

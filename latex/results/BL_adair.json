@@ -1,0 +1,8 @@
+{
+  "tag": "BL_adair",
+  "model": "adair",
+  "mode": "off_the_shelf",
+  "coupled_test_PSNR": 15.042,
+  "decoupled_test_PSNR": 14.926,
+  "n": 100
+}
