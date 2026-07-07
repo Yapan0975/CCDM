@@ -33,15 +33,16 @@ code/
     pilot3_mix.py             real/mixed fine-tune: closing the synthetic-to-real gap (Table 10)
     agg_exdark.py             aggregate ExDark AP/AP50/AR + seed-paired tests (Table 9)
     agg_p3.py                 aggregate closing-the-gap real/mixed runs (Table 10)
-latex/
-  main_pr.tex             manuscript (Elsevier elsarticle, Pattern Recognition)
-  supplement.tex          supplementary material (ad-hoc-noise pilot, per-seed tables, repro)
-  refs.bib                bibliography
-  results/                raw per-seed JSON for every reported cell (150 files, SHA-256 in MANIFEST)
+latex/results/            raw per-seed JSON for every reported cell (150 files, SHA-256 in MANIFEST)
 ```
 
-All aggregation scripts read JSON from `latex/results/` by default; override with the environment
-variable `RESULTS_DIR`.
+This repository is **code + raw results only**; the LaTeX manuscript, supplement, and bibliography
+are uploaded separately to the journal. All aggregation scripts read JSON from `latex/results/` by
+default; override with the environment variable `RESULTS_DIR`.
+
+**Dependencies** (`requirements.txt`): aggregation only needs `numpy`, `scipy`; `params_flops.py`
+additionally needs `torch` (`thop` optional, for measured FLOPs); full training/evaluation needs
+`torch`, `torchvision`, `opencv-python`, `pycocotools`, `tqdm`.
 
 ---
 
@@ -140,3 +141,9 @@ On Windows PowerShell, compare hashes with
   variation reflects genuine training stochasticity.
 - All p-values are raw seed-paired t-tests over five seeds; multiple-comparison handling is stated
   explicitly in the paper (Bonferroni threshold 0.007).
+- **ExDark detection split.** `pilot2_exdark.py` / `pilot3_mix.py` use the official ExDark train/test
+  partition converted to COCO format (`exdark_train.json`, 5890 imgs / `exdark_test.json`, 1473 imgs,
+  disjoint). The twelve ExDark categories map to torchvision-COCO classes by motorbike->motorcycle,
+  people->person, table->dining table (identity otherwise). Configure dataset paths via the
+  `EXDARK_ROOT` / `EXDARK_TRAIN` / `EXDARK_TEST` / `COCO_ROOT` env vars or the `--exdark_*` / `--coco`
+  flags.

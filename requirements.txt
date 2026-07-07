@@ -1,0 +1,16 @@
+# CCDM / CCD reproducibility requirements.
+#
+# Aggregation only (reproduce Tables 2/5/6/7/8/9/10 + CIs from the released JSON):
+#   numpy, scipy
+# Params/FLOPs (params_flops.py): torch  (thop optional, for measured FLOPs)
+# Full training / evaluation (make_ccd.py, train_probe_c.py, pilot*.py):
+#   torch, torchvision, opencv-python, pycocotools, tqdm
+
+numpy
+scipy
+torch
+torchvision
+opencv-python
+pycocotools
+tqdm
+thop  # optional; params_flops.py falls back to reported values if absent
