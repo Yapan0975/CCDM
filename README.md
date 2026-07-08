@@ -1,8 +1,7 @@
 # CCDM / CCD - Coupled Composite Degradation Model and Benchmark
 
 Code, benchmark generator, and raw results for the paper
-**"Degradations Do Not Add Up: Coupling Structure as a Training Domain in Composite Restoration and
-Low-light Detection."**
+**"Coupling Structure as a Training Domain in Composite Restoration and Low-light Detection."**
 
 The central object is the **coupling structure** of composite-degradation synthesis: whether
 co-occurring degradations are composed independently (*decoupled*, the field default) or with explicit
