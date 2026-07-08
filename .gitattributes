@@ -1,0 +1,7 @@
+# Keep byte-exact line endings so the SHA-256 manifest in latex/results/
+# verifies identically on every platform (Linux LF vs Windows CRLF).
+# Without this, core.autocrlf=true rewrites LF->CRLF on checkout/archive and
+# every released-result hash fails. Data + integrity files must stay untouched.
+*.json   -text
+*.sha256 -text
+*.csv    -text
