@@ -3,7 +3,7 @@ seed-level paired significance vs the decoupled baseline. Reads exd_{dec,cpl,mix
 import json, numpy as np
 from scipy import stats
 SEEDS = [0, 1, 2, 3, 4]
-M = {'dec': 'decoupled', 'cpl': 'coupled', 'mix': 'mixed'}
+M = {'dec': 'decoupled', 'cpl': 'coupled', 'mix': 'mixed', 'cleanft': 'clean-COCO-ft'}
 
 import os as _os
 RESULTS_DIR = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..', '..', 'latex', 'results')  # repo-anchored; override via env RESULTS_DIR
@@ -36,13 +36,13 @@ ots = load('exd_offtheshelf')
 if ots:
     print(f'{"off-shelf":10}{ots["ap_exdark"]:<18.4f}{ots["ap50_exdark"]:<18.4f}'
           f'{ots["ar_exdark"]:<20.4f}{ots["ar_coupled_syn"]:<16.4f} 1(ref)')
-for ab in ['dec', 'cpl', 'mix']:
+for ab in ['cleanft', 'dec', 'cpl', 'mix']:
     print(f'{M[ab]:10}{ms(data[ab]["ap"]):18}{ms(data[ab]["ap50"]):18}{ms(data[ab]["ar"]):20}{ms(data[ab]["syn"]):16} {len(data[ab]["ap"])}')
 
 print('\n--- seed-paired tests vs decoupled ---')
 for metric, lab in [('ap', 'AP'), ('ap50', 'AP50'), ('ar', 'AR')]:
     dec = np.array(data['dec'][metric])
-    for ab in ['cpl', 'mix']:
+    for ab in ['cpl', 'mix', 'cleanft']:
         v = np.array(data[ab][metric]); n = min(len(v), len(dec))
         if n > 1:
             p = stats.ttest_rel(v[:n], dec[:n])[1]

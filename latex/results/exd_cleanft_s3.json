@@ -1,0 +1,12 @@
+{
+  "mode": "cleanft",
+  "seed": 3,
+  "epochs": 4,
+  "train_n": 4000,
+  "eval_n": 1000,
+  "ar_coupled_syn": 0.24796333080729496,
+  "ar_exdark": 0.43237060178070186,
+  "ap_exdark": 0.2638643444908777,
+  "ap50_exdark": 0.5535581917534019,
+  "missing_imgs": 0
+}

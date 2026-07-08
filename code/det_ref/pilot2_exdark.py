@@ -213,7 +213,10 @@ def main(a):
 if __name__ == "__main__":
     P = argparse.ArgumentParser()
     P.add_argument("--coco", default=os.path.expanduser("~/data/coco"))
-    P.add_argument("--mode", default="coupled", choices=["clean", "decoupled", "coupled", "mixed"])
+    # clean   = off-the-shelf, no fine-tuning (reference row).
+    # cleanft = SAME-budget clean-COCO fine-tune (no degradation), the same 4000 imgs / epochs /
+    #           optimizer / seed as decoupled|coupled|mixed -- the control asked for by review.
+    P.add_argument("--mode", default="coupled", choices=["clean", "cleanft", "decoupled", "coupled", "mixed"])
     P.add_argument("--seed", type=int, default=0)
     P.add_argument("--train_n", type=int, default=4000)
     P.add_argument("--eval_n", type=int, default=1000)
