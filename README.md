@@ -28,11 +28,11 @@ code/
     train_onerestore_ccd.py   fine-tune OneRestore on CCD (all-in-one cross-arch check)
     agg_p1.py                 aggregate var-matched LOLv2, architecture, OneRestore (Tables 5, 7, 8)
   det_ref/
-    pilot2_exdark.py          fine-tune RetinaNet on degraded COCO, evaluate on real ExDark (Table 9)
+    pilot2_exdark.py          fine-tune RetinaNet on degraded (or clean, --mode cleanft) COCO, eval real ExDark (Table 9)
     pilot3_mix.py             real/mixed fine-tune: closing the synthetic-to-real gap (Table 10)
     agg_exdark.py             aggregate ExDark AP/AP50/AR + seed-paired tests (Table 9)
     agg_p3.py                 aggregate closing-the-gap real/mixed runs (Table 10)
-latex/results/            raw per-seed JSON for every reported cell (150 files, SHA-256 in MANIFEST)
+latex/results/            raw per-seed JSON for every reported cell (155 files, SHA-256 in MANIFEST)
 ```
 
 This repository is **code + raw results only**; the LaTeX manuscript, supplement, and bibliography
@@ -90,7 +90,7 @@ export CCD_DIR=/path/to/your/ccd_workdir   # used by the run_*.sh sweeps
 | Variance-matched LOLv2 specialist | `python code/train_probe_c.py --mode {decoupled,coupled,mixed} --seed s --combos low_noise --dark --pgnoise --varmatch --iters 12000 --tag LLv_{ab}_s${s}` |
 | Architecture (agnostic vs aware) | `python code/train_probe_c.py --model {nafnet,couplenet} --mode coupled --seed s --combos low_rain,low_haze_rain --iters 16000` |
 | OneRestore re-training | `python code/srv/train_onerestore_ccd.py --mode {decoupled,coupled,mixed} --seed s` |
-| ExDark detection | `python code/det_ref/pilot2_exdark.py --mode {clean,decoupled,coupled,mixed} --seed s --coco <coco> --exdark_root <exdark> --exdark_json <exdark_test.json>` |
+| ExDark detection | `python code/det_ref/pilot2_exdark.py --mode {clean,cleanft,decoupled,coupled,mixed} --seed s --coco <coco> --exdark_root <exdark> --exdark_json <exdark_test.json>` (`cleanft` = same-budget clean-COCO fine-tune control, no degradation) |
 | Deployment: closing the gap (Table 10) | `python code/det_ref/pilot3_mix.py --mode {real,mixed} --seed s` (real ExDark train, optionally mixed with COCO coupled synthesis) |
 
 Convenience sweeps: `code/srv/run_p1.sh` (LOLv2 + architecture), `code/det_ref/run_exdark.sh`
