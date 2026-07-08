@@ -3,7 +3,7 @@ seed-level paired significance vs the decoupled baseline. Reads exd_{dec,cpl,mix
 import json, numpy as np
 from scipy import stats
 SEEDS = [0, 1, 2, 3, 4]
-M = {'dec': 'decoupled', 'cpl': 'coupled', 'mix': 'mixed', 'cleanft': 'clean-COCO-ft'}
+M = {'dec': 'decoupled', 'cpl': 'coupled', 'mix': 'mixed', 'cleanft': 'clean-ft'}
 
 import os as _os
 RESULTS_DIR = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..', '..', 'latex', 'results')  # repo-anchored; override via env RESULTS_DIR
