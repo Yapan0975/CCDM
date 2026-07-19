@@ -32,7 +32,7 @@ code/
     pilot3_mix.py             real/mixed fine-tune: closing the synthetic-to-real gap (Table 10)
     agg_exdark.py             aggregate ExDark AP/AP50/AR + seed-paired tests (Table 9)
     agg_p3.py                 aggregate closing-the-gap real/mixed runs (Table 10)
-latex/results/            raw per-seed JSON for every reported cell (155 files, SHA-256 in MANIFEST)
+latex/results/            raw per-seed JSON for every reported cell (182 files, SHA-256 in MANIFEST)
 ```
 
 This repository is **code + raw results only**; the LaTeX manuscript, supplement, and bibliography
@@ -116,6 +116,41 @@ To read results from elsewhere, set `RESULTS_DIR` --- Bash: `RESULTS_DIR=/path p
 PowerShell: `$env:RESULTS_DIR='C:\path'; python code\agg_multiseed.py`. Each script prints means +/- std
 and the seed-paired t-tests; the Bonferroni threshold (0.007 across seven tests) is applied where
 stated. Per-seed values are also tabulated in `supplement.tex` (S2).
+
+### 5b. Scene-level robustness analyses (supplement S4/S5)
+
+Seed-paired tests quantify training stochasticity; these additions quantify scene-sampling
+uncertainty and measure the coupling of real data directly.
+
+```bash
+# per-scene evaluation of the released checkpoints (eval-only, needs the .pth files)
+python code/eval_per_scene.py --tags FW_s0_dec,...,FW_s4_mix \
+    --combos low_rain,low_haze_rain --out per_scene_FW.json
+python code/eval_real_lol_per.py --tags LLv_dec_s0,...,LLv_mix_s4 \
+    --root lolv2_test --low_dir Input --high_dir GT --out per_image_LLv.json
+
+# scene-level + hierarchical seed x scene bootstrap (reads the two files above)
+python code/ccd_scene_bootstrap.py --dir latex/results --boot 5000
+
+# real-noise coupling measurement (LOLv2 pairs + CCDM renders; CPU-only)
+python code/real_coupling_stats.py --synthetic --out real_coupling_stats_v2.json
+```
+
+The corresponding outputs are released in `latex/results/`: `per_scene_FW.json`,
+`per_image_LLv.json`, `bootstrap_summary.json`, `real_coupling_stats_v2.json`.
+
+### 5c. ExDark campaign re-run with saved artefacts
+
+`code/det_ref/pilot2_exdark_v2.py` repeats the Table-9 fine-tuning campaign identically to
+`pilot2_exdark.py` but saves the fine-tuned checkpoint, the raw detections (score >= 0.01), and
+per-class AP/AR; `code/det_ref/run_exdark_v2.sh` runs all 21 jobs (4 modes x 5 seeds +
+off-the-shelf) on a single GPU. `code/det_ref/exdark_bootstrap.py` then computes image-level
+bootstrap CIs (with a custom COCO `accumulate` validated against pycocotools on the full sample),
+a rerun-vs-published consistency table, the per-class AP table, and score-floor sensitivity.
+The 21 re-run summary JSONs are released as `latex/results/rerun_exd_*.json`; per-seed APs drift
+by up to ~0.02-0.03 from the published values (training nondeterminism across environments) while
+the ordering (coupled > mixed > decoupled, both far below the non-degraded references) and the
+headline ratio are preserved. Full detection dumps are regenerable with the script.
 
 ---
 

@@ -51,16 +51,25 @@ ax.set_title('Each specialist wins its own structure; mixed covers both', fontsi
 fig.tight_layout(); fig.savefig('figs/fig_spec.pdf'); plt.close(fig)
 
 # ---------- 3. ExDark real detection ----------
-fig, ax = plt.subplots(figsize=(4.4, 3.1))
-labels = ['decoupled', 'mixed', 'coupled']
-ap = [0.0439, 0.0817, 0.1059]; aps = [0.0138, 0.0042, 0.0128]  # 5-seed mean/std, agg_exdark.py
-cols = ['#d65f5f', '#55a868', '#4c72b0']
-x = np.arange(3)
-ax.bar(x, ap, 0.6, yerr=aps, capsize=4, color=cols)
-ax.axhline(0.293, ls='--', color='gray', lw=1.3, label='off-the-shelf (ref.)')
-ax.set_xticks(x); ax.set_xticklabels(labels); ax.set_ylabel('ExDark AP (real GT)')
-ax.set_ylim(0, 0.32)
-ax.legend(fontsize=8, loc='upper left')
-ax.set_title('Real low-light detection: coupled $\\approx2.4\\times$ decoupled', fontsize=9.5)
+# All five arms as full bars (not a dashed reference line), grouped into the two
+# non-degraded references vs the three synthetic-degradation fine-tunes, so the
+# absolute collapse of the degraded arms is visible at a glance and the 2.4x
+# coupled/decoupled ratio reads as a controlled diagnostic, not a performance win.
+fig, ax = plt.subplots(figsize=(5.2, 3.2))
+labels = ['off-the-shelf\n(no fine-tune)', 'clean-COCO\nfine-tune', 'decoupled', 'mixed', 'coupled']
+ap = [0.2926, 0.2623, 0.0439, 0.0817, 0.1059]   # 5-seed means (agg_exdark.py); off-the-shelf single
+aps = [0.0, 0.0081, 0.0138, 0.0042, 0.0128]
+cols = ['#8c8c8c', '#b8b8b8', '#d65f5f', '#55a868', '#4c72b0']
+x = np.array([0.0, 1.0, 2.4, 3.4, 4.4])
+ax.bar(x, ap, 0.72, yerr=aps, capsize=4, color=cols)
+ax.axvline(1.7, color='k', lw=0.8, ls=':')
+ax.text(0.5, 0.315, 'no degradation', ha='center', fontsize=8, color='#555555')
+ax.text(3.4, 0.315, 'synthetic-degradation fine-tune', ha='center', fontsize=8, color='#555555')
+ax.annotate('$\\approx2.4\\times$', xy=(4.4, 0.122), xytext=(2.9, 0.16), fontsize=9,
+            arrowprops=dict(arrowstyle='->', lw=0.9, color='#333333'))
+ax.set_xticks(x); ax.set_xticklabels(labels, fontsize=8)
+ax.set_ylabel('ExDark AP (real GT)')
+ax.set_ylim(0, 0.34)
+ax.set_title('Real low-light detection: a controlled coupling-structure comparison', fontsize=9.5)
 fig.tight_layout(); fig.savefig('figs/fig_exdark.pdf'); plt.close(fig)
 print('figures done')
