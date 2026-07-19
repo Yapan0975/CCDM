@@ -5,12 +5,23 @@
 # Params/FLOPs (params_flops.py): torch  (thop optional, for measured FLOPs)
 # Full training / evaluation (make_ccd.py, train_probe_c.py, pilot*.py):
 #   torch, torchvision, opencv-python, pycocotools, tqdm
+#
+# Tested environment for the released results and the 2026-07 re-run
+# (4x RTX 5090, CUDA 13.0):
+#   torch 2.11.0+cu130, torchvision 0.26.0+cu130, numpy 2.2.6, scipy 1.15.3,
+#   opencv-python 4.13.0, scikit-image 0.25.2, pycocotools 2.0.x
+# NOTE: the independent ExDark re-run showed per-seed AP drift up to ~0.02-0.03
+# across training environments (nondeterministic kernels accumulated over four
+# epochs) while every ordering and the absolute-gap conclusions were preserved;
+# evaluation of a fixed checkpoint is exactly reproducible. Pin the versions
+# above to minimise drift.
 
 numpy
 scipy
 torch
 torchvision
 opencv-python
+scikit-image
 pycocotools
 tqdm
 thop  # optional; params_flops.py falls back to reported values if absent
