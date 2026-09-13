@@ -1,0 +1,33 @@
+{
+  "tag": "LAM_s0_rand",
+  "model": "nafnet",
+  "mode": "coupled",
+  "lam": "rand",
+  "ca": false,
+  "train_n": 0,
+  "params_M": 1.72,
+  "coupled_test_PSNR": 20.541,
+  "decoupled_test_PSNR": 20.755,
+  "per_cell": {
+    "low_haze_rain|coupled": {
+      "PSNR": 17.907,
+      "SSIM": 0.587,
+      "n": 100
+    },
+    "low_haze_rain|decoupled": {
+      "PSNR": 18.493,
+      "SSIM": 0.5824,
+      "n": 100
+    },
+    "low_rain|coupled": {
+      "PSNR": 23.174,
+      "SSIM": 0.7256,
+      "n": 100
+    },
+    "low_rain|decoupled": {
+      "PSNR": 23.017,
+      "SSIM": 0.7097,
+      "n": 100
+    }
+  }
+}

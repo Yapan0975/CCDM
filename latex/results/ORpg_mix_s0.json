@@ -1,0 +1,11 @@
+{
+  "tag": "ORpg_mix_s0",
+  "model": "onerestore",
+  "mode": "mixed",
+  "params": {
+    "noise_model": "poisson"
+  },
+  "coupled_test_PSNR": 19.88,
+  "decoupled_test_PSNR": 19.84,
+  "n": 100
+}

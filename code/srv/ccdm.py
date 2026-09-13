@@ -59,7 +59,7 @@ def motion_psf(length, angle_deg):
 
 
 def degrade(J, depth, rng, *, mode='coupled', types=('low', 'rain', 'haze'),
-            rain_mask=None, snow_mask=None, params=None, coupled_terms=None):
+            rain_mask=None, snow_mask=None, params=None, coupled_terms=None, lam=None):
     """
     J     : HxWx3 float32 in [0,1]
     depth : HxW   float32 in [0,1] (near=0, far=1)
@@ -67,7 +67,15 @@ def degrade(J, depth, rng, *, mode='coupled', types=('low', 'rain', 'haze'),
     coupled_terms : optional iterable subset of {'rain','noise','haze'}. If given, each term uses
                     its coupled (cross-modulated) form iff it is in the set, else the decoupled
                     form -- enables per-cross-term ablation (A4). If None, `mode` decides all.
-    returns (lq, gt) ; gt = {'clean','L','t','sigma','types','mode'}
+    lam   : optional float in [0,1] -- CONTINUOUS coupling strength. Each cross-term's
+            modulation FIELD is linearly interpolated between its decoupled (lam=0) and
+            coupled (lam=1) form, while the marginal severity is held fixed at every lam
+            (mean airlight, total rain energy, mean noise sigma are re-normalised exactly as
+            in the binary case). lam=0 and lam=1 reproduce mode='decoupled' / 'coupled'
+            pixel-for-pixel under the same rng, because no branch consumes extra randomness.
+            If lam is None the binary `mode` / `coupled_terms` path is used (published
+            behaviour is untouched).
+    returns (lq, gt) ; gt = {'clean','L','t','sigma','types','mode','lam'}
     """
     assert mode in ('coupled', 'decoupled')
     def is_coupled(term):
@@ -97,7 +105,14 @@ def degrade(J, depth, rng, *, mode='coupled', types=('low', 'rain', 'haze'),
     # 3) haze (cross-term: airlight x light-source in coupled mode)
     if 'haze' in types:
         A0 = rng.uniform(*p['A0'])
-        if is_coupled('haze'):
+        if lam is not None:                        # continuous coupling strength
+            src = (x.mean(2) > np.quantile(x.mean(2), 0.97)).astype(np.float32)
+            glow = cv2.GaussianBlur(src, (0, 0), sigmaX=W * 0.03)
+            glow = glow / (glow.max() + 1e-9)
+            m = (1.0 - lam) + lam * (0.3 + 1.6 * glow)   # modulation field, lam-interpolated
+            A = (A0 * m)[:, :, None]
+            A *= A0 / (A.mean() + 1e-9)            # equal mean airlight at EVERY lam
+        elif is_coupled('haze'):
             src = (x.mean(2) > np.quantile(x.mean(2), 0.97)).astype(np.float32)
             glow = cv2.GaussianBlur(src, (0, 0), sigmaX=W * 0.03)
             glow = glow / (glow.max() + 1e-9)
@@ -115,7 +130,11 @@ def degrade(J, depth, rng, *, mode='coupled', types=('low', 'rain', 'haze'),
     # 5) rain (cross-term: rain radiance x illumination in coupled mode)
     if 'rain' in types and rain_mask is not None:
         rm = cv2.resize(rain_mask, (W, H)) * rng.uniform(*p['rain_c'])
-        if is_coupled('rain'):
+        if lam is not None:                        # continuous coupling strength
+            rm_l = rm * ((1.0 - lam) + lam * L[:, :, None])
+            rm_l *= rm.sum() / (rm_l.sum() + 1e-9)  # equal total rain energy at EVERY lam
+            x = np.clip(x + rm_l, 0, 1)
+        elif is_coupled('rain'):
             rm_c = rm * L[:, :, None]
             rm_c *= rm.sum() / (rm_c.sum() + 1e-9)  # equal total rain energy as decoupled
             x = np.clip(x + rm_c, 0, 1)
@@ -131,7 +150,11 @@ def degrade(J, depth, rng, *, mode='coupled', types=('low', 'rain', 'haze'),
             a = rng.uniform(*p.get('shot', (0.01, 0.06)))
             b = rng.uniform(*p.get('read', (0.0005, 0.004)))
             sig = np.sqrt(np.maximum(a * x.mean(2) + b, 1e-8)).astype(np.float32)
-            if is_coupled('noise'):
+            if lam is not None:                    # continuous coupling strength
+                flat = (float(np.sqrt((sig ** 2).mean())) if p.get('noise_match') == 'var'
+                        else float(sig.mean()))
+                sigma_map = ((1.0 - lam) * flat + lam * sig).astype(np.float32)
+            elif is_coupled('noise'):
                 sigma_map = sig
             elif p.get('noise_match') == 'var':                # variance-matched: equal total noise energy
                 sigma_map = np.full((H, W), float(np.sqrt((sig ** 2).mean())), np.float32)
@@ -139,7 +162,11 @@ def degrade(J, depth, rng, *, mode='coupled', types=('low', 'rain', 'haze'),
                 sigma_map = np.full((H, W), float(sig.mean()), np.float32)
         else:                                                  # legacy gain model (sigma0 / L)
             s0 = rng.uniform(*p['sigma0'])
-            if is_coupled('noise'):
+            if lam is not None:                    # continuous coupling strength
+                sc = (s0 / (L + 0.15)).astype(np.float32)
+                sc = sc * (s0 / (sc.mean() + 1e-9))            # equal mean sigma as decoupled
+                sigma_map = ((1.0 - lam) * s0 + lam * sc).astype(np.float32)
+            elif is_coupled('noise'):
                 sigma_map = (s0 / (L + 0.15)).astype(np.float32); sigma_map *= s0 / (sigma_map.mean() + 1e-9)
             else:
                 sigma_map = np.full((H, W), s0, np.float32)
@@ -147,5 +174,5 @@ def degrade(J, depth, rng, *, mode='coupled', types=('low', 'rain', 'haze'),
 
     gt = dict(clean=J.astype(np.float32), L=L.astype(np.float32),
               t=t[:, :, 0].astype(np.float32), sigma=sigma_map,
-              types=tuple(types), mode=mode)
+              types=tuple(types), mode=mode, lam=lam)
     return x.astype(np.float32), gt

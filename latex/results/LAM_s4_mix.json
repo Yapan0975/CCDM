@@ -1,0 +1,33 @@
+{
+  "tag": "LAM_s4_mix",
+  "model": "nafnet",
+  "mode": "mixed",
+  "lam": null,
+  "ca": false,
+  "train_n": 0,
+  "params_M": 1.72,
+  "coupled_test_PSNR": 20.734,
+  "decoupled_test_PSNR": 20.673,
+  "per_cell": {
+    "low_haze_rain|coupled": {
+      "PSNR": 17.929,
+      "SSIM": 0.5837,
+      "n": 100
+    },
+    "low_haze_rain|decoupled": {
+      "PSNR": 18.343,
+      "SSIM": 0.5741,
+      "n": 100
+    },
+    "low_rain|coupled": {
+      "PSNR": 23.539,
+      "SSIM": 0.7285,
+      "n": 100
+    },
+    "low_rain|decoupled": {
+      "PSNR": 23.003,
+      "SSIM": 0.7055,
+      "n": 100
+    }
+  }
+}

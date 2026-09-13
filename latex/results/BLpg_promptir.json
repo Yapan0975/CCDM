@@ -1,0 +1,11 @@
+{
+  "tag": "BLpg_promptir",
+  "model": "promptir",
+  "mode": "off_the_shelf",
+  "params": {
+    "noise_model": "poisson"
+  },
+  "coupled_test_PSNR": 13.863,
+  "decoupled_test_PSNR": 13.312,
+  "n": 100
+}

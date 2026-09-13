@@ -1,0 +1,21 @@
+noise model: Poisson-Gaussian
+=== A/B. endpoint reproduction (max abs pixel error over 100 scenes x 2 combos) ===
+  lam=0.0 vs mode=decoupled : 4.768e-07   PASS
+  lam=1.0 vs mode=coupled   : 0.000e+00   PASS
+
+=== C. marginal severity across lam (mean noise sigma; should be ~constant) ===
+  lam=0     mean sigma = 0.128257  (rel. dev from lam=0: +0.000%)
+  lam=0.25  mean sigma = 0.128005  (rel. dev from lam=0: -0.197%)
+  lam=0.5   mean sigma = 0.127492  (rel. dev from lam=0: -0.597%)
+  lam=0.75  mean sigma = 0.126492  (rel. dev from lam=0: -1.376%)
+  lam=1     mean sigma = 0.124314  (rel. dev from lam=0: -3.075%)
+
+=== monotone traverse from decoupled to coupled endpoint ===
+  lam    mean|I_lam-I_dec|   mean|I_lam-I_cpl|
+  0      0.000000          0.067372
+  0.25   0.010401          0.057252
+  0.5    0.023104          0.044717
+  0.75   0.040160          0.027616
+  1      0.067372          0.000000
+
+OVERALL: CHECK FAILED

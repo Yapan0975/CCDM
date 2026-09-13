@@ -1,0 +1,11 @@
+{
+  "tag": "ORpg_cpl_s4",
+  "model": "onerestore",
+  "mode": "coupled",
+  "params": {
+    "noise_model": "poisson"
+  },
+  "coupled_test_PSNR": 20.245,
+  "decoupled_test_PSNR": 18.573,
+  "n": 100
+}

@@ -1,0 +1,33 @@
+{
+  "tag": "FRpg_dec",
+  "model": "restormer",
+  "mode": "decoupled",
+  "lam": null,
+  "ca": false,
+  "train_n": 0,
+  "params_M": 4.38,
+  "coupled_test_PSNR": 18.133,
+  "decoupled_test_PSNR": 21.599,
+  "per_cell": {
+    "low_haze_rain|coupled": {
+      "PSNR": 15.229,
+      "SSIM": 0.5775,
+      "n": 100
+    },
+    "low_haze_rain|decoupled": {
+      "PSNR": 19.465,
+      "SSIM": 0.6263,
+      "n": 100
+    },
+    "low_rain|coupled": {
+      "PSNR": 21.038,
+      "SSIM": 0.7094,
+      "n": 100
+    },
+    "low_rain|decoupled": {
+      "PSNR": 23.734,
+      "SSIM": 0.7434,
+      "n": 100
+    }
+  }
+}

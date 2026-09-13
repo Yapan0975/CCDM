@@ -3,15 +3,16 @@ eval_per_scene.py - per-scene PSNR/SSIM of released checkpoints on the determini
 test matrix (scene-level bootstrap support; eval-only, no training).
 
 Replicates dataset_ccd.build_eval() rendering exactly (same seed0, per-index rng, mask
-indexing, /8 crop), but streams one scene at a time so many models can be evaluated
-without holding the full render matrix in memory.
+indexing, /8 crop, same synthesis params), but streams one scene at a time so many models can
+be evaluated without holding the full render matrix in memory. The noise flag must match the
+one the checkpoints were trained with (--pgnoise for the Poisson-Gaussian campaign).
 
-Run (server, composite-restore dir), FW composite track:
-  CUDA_VISIBLE_DEVICES=0 python3 -u eval_per_scene.py \
-      --tags FW_s0_dec,FW_s0_cpl,FW_s0_mix,...  --combos low_rain,low_haze_rain \
-      --out per_scene_FW.json
-Validation gate: the per-cell means printed at the end must reproduce the released
-FW_s*_{dec,cpl,mix}.json per_cell values (rounding aside).
+Run (server, composite-restore dir), Poisson-Gaussian composite track:
+  CUDA_VISIBLE_DEVICES=0 python3 -u eval_per_scene.py --pgnoise \
+      --tags LAM_s0_l000,LAM_s0_l100,LAM_s0_mix,...  --combos low_rain,low_haze_rain \
+      --out per_scene_PG.json
+Validation gate: the per-cell means printed at the end must reproduce the per_cell values in
+the corresponding TAG.json written by train_probe_c.py (rounding aside).
 """
 import os, sys, json, glob, argparse
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -27,12 +28,16 @@ DEV = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 def main(a):
     tags = [t for t in a.tags.split(',') if t]
+    params = {}
+    if a.dark: params['gamma'] = (3.0, 5.0)
+    if a.pgnoise: params['noise_model'] = 'poisson'
+    params = params or None
     models = {}
     for t in tags:
         m = NAFNet(width=a.width)
         m.load_state_dict(torch.load(t + '.pth', map_location='cpu'))
         models[t] = m.to(DEV).eval()
-    print(f'[eval_per_scene] {len(models)} models loaded', flush=True)
+    print(f'[eval_per_scene] {len(models)} models loaded, params={params}', flush=True)
     cleans = sorted(glob.glob(os.path.join(a.clean_test, '*.png')))
     rains = sorted(glob.glob(os.path.join(a.rain, '*')))
     snows = sorted(glob.glob(os.path.join(a.snow, '*')))
@@ -50,7 +55,7 @@ def main(a):
                 rm = cv2.imread(rains[idx % len(rains)]).astype(np.float32) / 255.0
                 sm = cv2.imread(snows[idx % len(snows)]).astype(np.float32) / 255.0
                 lq, _ = ccdm.degrade(J, d, rng, mode=mode, types=types, rain_mask=rm,
-                                     snow_mask=sm, params=None)
+                                     snow_mask=sm, params=params)
                 t_in = torch.from_numpy(lq.transpose(2, 0, 1)).float().unsqueeze(0).to(DEV)
                 for tag, m in models.items():
                     with torch.no_grad(), torch.cuda.amp.autocast():
@@ -64,19 +69,23 @@ def main(a):
                     cell['ssim'].append(round(float(ss), 4))
         if (idx + 1) % 10 == 0:
             print(f'[{idx + 1}/{len(cleans)}] scenes done', flush=True)
-    json.dump(dict(scenes=scenes, seed0=a.seed0, combos=list(sel), width=a.width, results=out),
-              open(a.out, 'w'))
+    json.dump(dict(scenes=scenes, seed0=a.seed0, combos=list(sel), width=a.width, params=params,
+                   results=out), open(a.out, 'w'))
     print('saved', a.out, flush=True)
-    # validation print: per-cell means must match the released aggregate JSONs
+    # validation print: per-cell means must match the per_cell values in TAG.json
     for tag in tags:
         cells = {k: round(float(np.mean(v['psnr'])), 3) for k, v in out[tag].items()}
-        print(f'[check] {tag}: {cells}', flush=True)
+        ref = json.load(open(tag + '.json'))['per_cell'] if os.path.exists(tag + '.json') else {}
+        worst = max((abs(cells[k] - ref[k]['PSNR']) for k in cells if k in ref), default=float('nan'))
+        print(f'[check] {tag}: {cells}  max |diff| vs TAG.json = {worst:.3f}', flush=True)
 
 
 if __name__ == '__main__':
     P = argparse.ArgumentParser()
     P.add_argument('--tags', required=True)          # comma-separated checkpoint tags (tag.pth)
     P.add_argument('--combos', default='')           # e.g. low_rain,low_haze_rain
+    P.add_argument('--pgnoise', action='store_true') # must match the training noise model
+    P.add_argument('--dark', action='store_true')
     P.add_argument('--clean_test', default='clean_test100')
     P.add_argument('--depth_test', default='depth')
     P.add_argument('--rain', default='./OneRestore/syn_data/data/rain_mask')

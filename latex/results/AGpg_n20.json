@@ -1,0 +1,33 @@
+{
+  "tag": "AGpg_n20",
+  "model": "nafnet",
+  "mode": "coupled",
+  "lam": null,
+  "ca": false,
+  "train_n": 20,
+  "params_M": 1.72,
+  "coupled_test_PSNR": 18.452,
+  "decoupled_test_PSNR": 17.472,
+  "per_cell": {
+    "low_haze_rain|coupled": {
+      "PSNR": 16.182,
+      "SSIM": 0.5351,
+      "n": 100
+    },
+    "low_haze_rain|decoupled": {
+      "PSNR": 15.203,
+      "SSIM": 0.4887,
+      "n": 100
+    },
+    "low_rain|coupled": {
+      "PSNR": 20.722,
+      "SSIM": 0.6748,
+      "n": 100
+    },
+    "low_rain|decoupled": {
+      "PSNR": 19.741,
+      "SSIM": 0.6317,
+      "n": 100
+    }
+  }
+}

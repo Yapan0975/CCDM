@@ -1,0 +1,17 @@
+{
+  "ckpt": "LAM_s0_l000.pth",
+  "params": {
+    "noise_model": "poisson"
+  },
+  "none": 18.786,
+  "rain": 17.969,
+  "noise": 18.74,
+  "haze": 15.358,
+  "all": 15.447,
+  "drops_vs_none": {
+    "rain": 0.817,
+    "noise": 0.046,
+    "haze": 3.428,
+    "all": 3.339
+  }
+}

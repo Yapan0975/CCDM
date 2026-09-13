@@ -5,3 +5,5 @@
 *.json   -text
 *.sha256 -text
 *.csv    -text
+*.txt    -text
+*.log    -text

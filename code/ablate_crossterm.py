@@ -5,6 +5,9 @@ Loads a trained restorer and evaluates it on test variants that turn ON one cros
 time (rest decoupled): {none, rain, noise, haze, all}. Run for the decoupled-trained and the
 coupled-trained model. The cross term on which the decoupled-trained model drops most is the
 dominant coupling that field-standard synthesis fails to prepare for.
+The noise flag must match the one the checkpoint was trained with (--pgnoise for the
+Poisson-Gaussian campaign), e.g.
+  python3 ablate_crossterm.py --pgnoise --ckpt LAM_s0_l100.pth --out ablate_pg_cpl.json
 """
 import os, sys, json, argparse
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -29,10 +32,14 @@ def load_model(a):
     return m.to(DEV)
 
 def main(a):
+    params = {}
+    if a.dark: params['gamma'] = (3.0, 5.0)
+    if a.pgnoise: params['noise_model'] = 'poisson'
+    params = params or None
     m = load_model(a)
     cleans = sorted(glob.glob(os.path.join(a.clean, '*.png')))[:a.n]
     rains = sorted(glob.glob(os.path.join(a.rain, '*'))); snows = sorted(glob.glob(os.path.join(a.snow, '*')))
-    out = {}
+    out = {'ckpt': a.ckpt, 'params': params}
     for vname, cterms in VARIANTS.items():
         ps = []
         for idx, cf in enumerate(cleans):
@@ -42,7 +49,8 @@ def main(a):
             rng = np.random.default_rng(20000 + idx)            # fixed across variants & models
             rm = cv2.imread(rains[idx % len(rains)]).astype(np.float32) / 255.0
             sm = cv2.imread(snows[idx % len(snows)]).astype(np.float32) / 255.0
-            lq, _ = ccdm.degrade(J, d, rng, types=TYPES, rain_mask=rm, snow_mask=sm, coupled_terms=cterms)
+            lq, _ = ccdm.degrade(J, d, rng, types=TYPES, rain_mask=rm, snow_mask=sm,
+                                 coupled_terms=cterms, params=params)
             t = torch.from_numpy(lq.transpose(2, 0, 1)).float().unsqueeze(0).to(DEV)
             with torch.no_grad():
                 o = m(t)[0][0].clamp(0, 1).float().cpu().numpy().transpose(1, 2, 0)
@@ -57,6 +65,8 @@ if __name__ == '__main__':
     P.add_argument('--ckpt', required=True)
     P.add_argument('--model', default='nafnet')
     P.add_argument('--width', type=int, default=32)
+    P.add_argument('--pgnoise', action='store_true')   # must match the training noise model
+    P.add_argument('--dark', action='store_true')
     P.add_argument('--clean', default='clean_test100')
     P.add_argument('--depth', default='depth')
     P.add_argument('--rain', default='OneRestore/syn_data/data/rain_mask')

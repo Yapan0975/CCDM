@@ -1,0 +1,11 @@
+{
+  "tag": "BLpg_adair",
+  "model": "adair",
+  "mode": "off_the_shelf",
+  "params": {
+    "noise_model": "poisson"
+  },
+  "coupled_test_PSNR": 13.715,
+  "decoupled_test_PSNR": 13.149,
+  "n": 100
+}

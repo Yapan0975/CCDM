@@ -1,7 +1,9 @@
 """P1.2: fine-tune OneRestore on CCD (coupled vs decoupled vs mixed) and eval on the CCD 2x2.
 Adds a 4th, all-in-one architecture to the specialization result (reviewer Major 8: 'OneRestore
 retrained on decoupled/coupled CCD'). Reuses the frozen pretrained embedder; fine-tunes the restorer
-from the CDD-11 checkpoint with Charbonnier loss on CCD composite degradation."""
+from the CDD-11 checkpoint with Charbonnier loss on CCD composite degradation.
+--pgnoise renders training and test data with the Poisson-Gaussian noise model stated in the paper
+(the same flag as train_probe_c.py); the flag must be identical for training and evaluation."""
 import os, sys, json, glob, time, argparse
 import numpy as np, cv2, torch
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -27,6 +29,11 @@ def embed(embedder, lq):
 
 def main(a):
     torch.manual_seed(a.seed); np.random.seed(a.seed)
+    params = {}
+    if a.dark: params['gamma'] = (3.0, 5.0)
+    if a.pgnoise: params['noise_model'] = 'poisson'
+    params = params or None
+    print(f'[{a.tag}] mode={a.mode} seed={a.seed} iters={a.iters} params={params}', flush=True)
     embedder = load_embedder_ckpt(DEV, freeze_model=True, ckpt_name=a.embedder)
     restorer = OneRestore().to(DEV)
     sd = torch.load(a.restore, map_location=DEV)
@@ -51,7 +58,8 @@ def main(a):
         sm = cv2.imread(snows[rng.integers(len(snows))]).astype(np.float32) / 255.
         types = COMBOS[list(COMBOS)[rng.integers(len(COMBOS))]]
         mode = a.mode if a.mode != 'mixed' else ('coupled' if rng.integers(2) == 0 else 'decoupled')
-        lq, _ = ccdm.degrade(J, d, rng, mode=mode, types=types, rain_mask=rm, snow_mask=sm)
+        lq, _ = ccdm.degrade(J, d, rng, mode=mode, types=types, rain_mask=rm, snow_mask=sm,
+                             params=params)
         lq = np.clip(lq, 0, 1)
         lq_re = torch.from_numpy(lq.transpose(2, 0, 1)).float().unsqueeze(0).to(DEV)
         gt = torch.from_numpy(J.transpose(2, 0, 1)).float().unsqueeze(0).to(DEV)
@@ -75,12 +83,13 @@ def main(a):
                     rng = np.random.default_rng(10000 + idx)
                     rm = cv2.imread(rains[idx % len(rains)]).astype(np.float32) / 255.
                     sm = cv2.imread(snows[idx % len(snows)]).astype(np.float32) / 255.
-                    lq, _ = ccdm.degrade(J, d, rng, mode=mode, types=types, rain_mask=rm, snow_mask=sm)
+                    lq, _ = ccdm.degrade(J, d, rng, mode=mode, types=types, rain_mask=rm, snow_mask=sm,
+                                         params=params)
                     lq = np.clip(lq, 0, 1)
                     lq_re = torch.from_numpy(lq.transpose(2, 0, 1)).float().unsqueeze(0).to(DEV)
                     out = restorer(lq_re, embed(embedder, lq))[0].clamp(0, 1).cpu().numpy().transpose(1, 2, 0)
                     cell[mode].append(psnr_fn(J, out, data_range=1.0))
-    res = dict(tag=a.tag, model='onerestore', mode=a.mode,
+    res = dict(tag=a.tag, model='onerestore', mode=a.mode, params=params,
                coupled_test_PSNR=round(float(np.mean(cell['coupled'])), 3),
                decoupled_test_PSNR=round(float(np.mean(cell['decoupled'])), 3), n=len(tests))
     print(json.dumps(res)); json.dump(res, open(a.tag + '.json', 'w'), indent=2)
@@ -95,6 +104,8 @@ if __name__ == '__main__':
     P.add_argument('--train_n', type=int, default=0)
     P.add_argument('--crop', type=int, default=256)
     P.add_argument('--lr', type=float, default=1e-4)
+    P.add_argument('--pgnoise', action='store_true')   # Poisson-Gaussian noise (paper's model)
+    P.add_argument('--dark', action='store_true')
     P.add_argument('--clean_train', default='clean_train_full'); P.add_argument('--depth', default='depth_full')
     P.add_argument('--clean_test', default='clean_test100'); P.add_argument('--depth_test', default='depth')
     P.add_argument('--rain', default='OneRestore/syn_data/data/rain_mask')

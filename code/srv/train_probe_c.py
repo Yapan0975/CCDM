@@ -26,10 +26,13 @@ def main(a):
     params = {}
     if a.dark: params['gamma'] = (3.0, 5.0)                   # darker low-light (closer to real LOL)
     if a.pgnoise: params['noise_model'] = 'poisson'          # physically-faithful heteroscedastic noise
-    if a.varmatch: params['noise_match'] = 'var'             # match total noise variance, not mean sigma
     params = params or None
+    lam = None
+    if a.lam != '':                                  # '' -> binary mode (published behaviour)
+        lam = 'rand' if a.lam == 'rand' else float(a.lam)
     ds = CCDTrain(a.clean_train, a.depth, a.mode, a.rain, a.snow, crop=a.crop,
-                  length=a.bs * a.iters, train_n=a.train_n, combos=combos, params=params, seed=a.seed)
+                  length=a.bs * a.iters, train_n=a.train_n, combos=combos, params=params,
+                  seed=a.seed, lam=lam)
     dl = DataLoader(ds, batch_size=a.bs, num_workers=a.workers, shuffle=False, drop_last=True, pin_memory=True)
     is_cn = (a.model == 'couplenet')
     if a.model == 'couplenet':
@@ -44,7 +47,7 @@ def main(a):
     opt = torch.optim.AdamW(model.parameters(), lr=a.lr, weight_decay=1e-4)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, a.iters, eta_min=a.lr * 0.01)
     scaler = torch.cuda.amp.GradScaler()
-    print(f'[{a.tag}] model={a.model} mode={a.mode} ca={a.ca} train_n={a.train_n or "all"} params={nparam:.2f}M iters={a.iters}')
+    print(f'[{a.tag}] model={a.model} mode={a.mode} lam={lam} ca={a.ca} train_n={a.train_n or "all"} params={nparam:.2f}M iters={a.iters}')
 
     model.train(); t0 = time.time(); it = 0
     for lq, gt, fld in dl:
@@ -83,7 +86,7 @@ def main(a):
         v = np.array(v); res[f'{c}|{m}'] = dict(PSNR=round(float(v[:,0].mean()),3), SSIM=round(float(v[:,1].mean()),4), n=len(v))
     coupled = np.mean([res[k]['PSNR'] for k in res if k.endswith('|coupled')])
     decoup = np.mean([res[k]['PSNR'] for k in res if k.endswith('|decoupled')])
-    out = dict(tag=a.tag, model=a.model, mode=a.mode, ca=bool(a.ca), train_n=a.train_n, params_M=round(nparam,2),
+    out = dict(tag=a.tag, model=a.model, mode=a.mode, lam=lam, ca=bool(a.ca), train_n=a.train_n, params_M=round(nparam,2),
                coupled_test_PSNR=round(float(coupled),3), decoupled_test_PSNR=round(float(decoup),3),
                per_cell=res)
     print(json.dumps(out, indent=2))
@@ -99,9 +102,10 @@ if __name__ == '__main__':
     P.add_argument('--ca', action='store_true')
     P.add_argument('--train_n', type=int, default=0)
     P.add_argument('--combos', default='')        # comma-sep subset of COMBOS (e.g. low_noise)
+    P.add_argument('--lam', default='')           # '' = binary mode; float in [0,1] = fixed
+                                                  # coupling strength; 'rand' = lam ~ U[0,1] per sample
     P.add_argument('--dark', action='store_true') # darker low-light (gamma 3-5) to match real LOL
     P.add_argument('--pgnoise', action='store_true') # physically-faithful Poisson-Gaussian noise
-    P.add_argument('--varmatch', action='store_true') # decoupled noise matches total variance (not mean sigma)
     P.add_argument('--tag', required=True)
     P.add_argument('--clean_train', default='./clean_train')
     P.add_argument('--clean_test', default='./clean_test')

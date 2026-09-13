@@ -1,0 +1,33 @@
+{
+  "tag": "CNpg_n80",
+  "model": "couplenet",
+  "mode": "coupled",
+  "lam": null,
+  "ca": false,
+  "train_n": 80,
+  "params_M": 2.25,
+  "coupled_test_PSNR": 19.436,
+  "decoupled_test_PSNR": 17.666,
+  "per_cell": {
+    "low_haze_rain|coupled": {
+      "PSNR": 16.785,
+      "SSIM": 0.5561,
+      "n": 100
+    },
+    "low_haze_rain|decoupled": {
+      "PSNR": 15.347,
+      "SSIM": 0.4996,
+      "n": 100
+    },
+    "low_rain|coupled": {
+      "PSNR": 22.087,
+      "SSIM": 0.7038,
+      "n": 100
+    },
+    "low_rain|decoupled": {
+      "PSNR": 19.986,
+      "SSIM": 0.6391,
+      "n": 100
+    }
+  }
+}
