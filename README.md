@@ -225,9 +225,11 @@ On Windows PowerShell, compare hashes with
   variation reflects genuine training stochasticity.
 - Unless stated otherwise, p-values are raw seed-paired t-tests over five seeds; multiple-comparison
   handling is stated explicitly in the paper (Bonferroni threshold 0.007).
-- **ExDark detection split.** `pilot2_exdark.py` / `pilot3_mix.py` use the official ExDark train/test
-  partition converted to COCO format (`exdark_train.json`, 5890 imgs / `exdark_test.json`, 1473 imgs,
-  disjoint). The twelve ExDark categories map to torchvision-COCO classes by motorbike->motorcycle,
+- **ExDark detection split.** `pilot2_exdark.py` / `pilot3_mix.py` use an 80/20 image-level split of
+  all 7363 ExDark images, converted to COCO format (`exdark_train.json`, 5890 imgs /
+  `exdark_test.json`, 1473 imgs, disjoint). This is not the 3000/1800/2563 train/val/test partition
+  used by some later low-light detection papers, so absolute AP values are not directly comparable
+  with theirs. The twelve ExDark categories map to torchvision-COCO classes by motorbike->motorcycle,
   people->person, table->dining table (identity otherwise). Configure dataset paths via the
   `EXDARK_ROOT` / `EXDARK_TRAIN` / `EXDARK_TEST` / `COCO_ROOT` env vars or the `--exdark_*` / `--coco`
   flags.
